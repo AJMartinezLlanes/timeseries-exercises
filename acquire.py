@@ -1,22 +1,9 @@
-'''
-Module to encapsulate data acquisition.
 
-Primary functions to use are
-
-- get_store_item_demand_data()
-- get_opsd_data()
-
-If you want to get the individual datasets from the store item demand data you
-can do so with
-
-- get_items_data
-- get_stores_dat
-- get_sales_data
-'''
 import os
 import requests
 import pandas as pd
 
+# fresh stores data from website
 def get_store_data_from_api():
     response = requests.get('https://api.data.codeup.com/api/v1/stores')
     data = response.json()
@@ -24,22 +11,22 @@ def get_store_data_from_api():
     stores = pd.DataFrame(stores)
     return stores
 
+# fresh items data from website
 def get_items_data_from_api():
     domain = 'https://api.data.codeup.com'
     endpoint = '/api/v1/items'
     items = []
-    while True:
+    while endpoint != None:
         url = domain + endpoint
         response = requests.get(url)
         data = response.json()
         print(f'\rGetting page {data["payload"]["page"]} of {data["payload"]["max_page"]}: {url}', end='')
         items.extend(data['payload']['items'])
         endpoint = data['payload']['next_page']
-        if endpoint is None:
-            break
     items = pd.DataFrame(items)
     return items
 
+# fresh sales data from website
 def get_sales_data_from_api():
     base_url = 'https://api.data.codeup.com/api/v1/sales?page='
     sales = []
@@ -59,6 +46,7 @@ def get_sales_data_from_api():
     sales = pd.DataFrame(sales)
     return sales
 
+# get stores data function
 def get_stores_data():
     if os.path.exists('stores.csv'):
         return pd.read_csv('stores.csv')
@@ -66,6 +54,7 @@ def get_stores_data():
     df.to_csv('stores.csv', index=False)
     return df
 
+# get items data function
 def get_items_data():
     if os.path.exists('items.csv'):
         return pd.read_csv('items.csv')
@@ -73,6 +62,7 @@ def get_items_data():
     df.to_csv('items.csv', index=False)
     return df
 
+# get sales data function
 def get_sales_data():
     if os.path.exists('sales.csv'):
         return pd.read_csv('sales.csv')
@@ -80,7 +70,8 @@ def get_sales_data():
     df.to_csv('sales.csv', index=False)
     return df
 
-def get_store_item_demand_data():
+# all data merged into one
+def get_all_store_data():
     sales = get_sales_data()
     stores = get_stores_data()
     items = get_items_data()
@@ -91,6 +82,7 @@ def get_store_item_demand_data():
 
     return df
 
+# opsd data
 def get_opsd_data():
     if os.path.exists('opsd.csv'):
         return pd.read_csv('opsd.csv')
