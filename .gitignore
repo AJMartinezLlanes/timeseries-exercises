@@ -4,3 +4,5 @@ env.py
 *.csv
 *.xlsx
 __pycache__/
+.vscode
+*lesson.ipynb
